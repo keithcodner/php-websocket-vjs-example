@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Counter Page 1</title>
+    <script>
+        const websocket = new WebSocket("ws://127.0.0.1:80");
+
+        websocket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            document.getElementById("counter").innerText = data.value;
+        };
+
+        async function incrementCounter() {
+            const response = await fetch("update.php");
+            const data = await response.json();
+            websocket.send(JSON.stringify(data));
+        }
+
+        async function fetchCounter() {
+            const response = await fetch("getCounter.php");
+            const data = await response.json();
+            document.getElementById("counter").innerText = data.value;
+        }
+
+        window.onload = fetchCounter;
+    </script>
+</head>
+<body>
+    <h1>Counter: <span id="counter">0</span></h1>
+    <button onclick="incrementCounter()">Increment</button>
+</body>
+</html>
